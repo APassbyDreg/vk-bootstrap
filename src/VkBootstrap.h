@@ -690,11 +690,11 @@ struct Device {
 	PFN_vkGetDeviceProcAddr fp_vkGetDeviceProcAddr = nullptr;
 	uint32_t instance_version = VKB_VK_API_VERSION_1_0;
 
-	Result<uint32_t> get_queue_index(QueueType type) const;
+	Result<uint32_t> get_queue_index(QueueType type, bool dedicated = true) const;
 	// Only a compute or transfer queue type is valid. All other queue types do not support a 'dedicated' queue index
 	Result<uint32_t> get_dedicated_queue_index(QueueType type) const;
 
-	Result<VkQueue> get_queue(QueueType type) const;
+	Result<VkQueue> get_queue(QueueType type, bool dedicated = true) const;
 	// Only a compute or transfer queue type is valid. All other queue types do not support a 'dedicated' queue
 	Result<VkQueue> get_dedicated_queue(QueueType type) const;
 

@@ -1398,7 +1398,10 @@ PhysicalDevice::operator VkPhysicalDevice() const { return this->physical_device
 
 // ---- Queues ---- //
 
-Result<uint32_t> Device::get_queue_index(QueueType type) const {
+Result<uint32_t> Device::get_queue_index(QueueType type, bool dedicated) const {
+	if (dedicated && (type == QueueType::compute || type == QueueType::transfer))
+		return get_dedicated_queue_index(type);
+
 	uint32_t index = detail::QUEUE_INDEX_MAX_VALUE;
 	switch (type) {
 		case QueueType::present:
@@ -1439,8 +1442,8 @@ Result<uint32_t> Device::get_dedicated_queue_index(QueueType type) const {
 	return index;
 }
 
-Result<VkQueue> Device::get_queue(QueueType type) const {
-	auto index = get_queue_index(type);
+Result<VkQueue> Device::get_queue(QueueType type, bool dedicated) const {
+	auto index = get_queue_index(type, dedicated);
 	if (!index.has_value()) return { index.error() };
 	VkQueue out_queue;
 	internal_table.fp_vkGetDeviceQueue(device, index.value(), 0, &out_queue);
